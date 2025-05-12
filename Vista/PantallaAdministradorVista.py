@@ -74,6 +74,10 @@ class PantallaAdministradorVista(QWidget):
                 font-weight: bold;
                 border: 1px solid #555;
             }
+                QTableCornerButton::section {
+                background-color: #232629;
+                border: 1px solid #555;
+            }
             QPushButton {
                 background-color: #31363b;
                 color: #f0f0f0;
