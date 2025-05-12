@@ -13,6 +13,7 @@ class PantallaAdministradorVista(QWidget):
         # Barra de búsqueda
         self.buscador = QLineEdit()
         self.buscador.setFixedHeight(50)
+        self.buscador.setFont(QFont("Arial", 18))
         self.buscador.setPlaceholderText("Buscar por nombre o pulsera...")
         self.buscador.textChanged.connect(self.actualizar_tabla)
         layout.addWidget(self.buscador)
