@@ -47,6 +47,46 @@ class PantallaAdministradorVista(QWidget):
         self.setLayout(layout)
         self.tabla.cellChanged.connect(self.pulsera_editada)
         self.actualizar_tabla()
+        self.set_dark_theme()  
+
+    def set_dark_theme(self):
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #232629;
+                color: #f0f0f0;
+            }
+            QLineEdit {
+                background-color: #232629;
+                color: #f0f0f0;
+                border: 2px solid #555;
+                border-radius: 8px;
+            }
+            QTableWidget {
+                background-color: #232629;
+                color: #f0f0f0;
+                border: 2px solid #555;
+                border-radius: 8px;
+                gridline-color: #555;
+            }
+            QHeaderView::section {
+                background-color: #232629;
+                color: #f0f0f0;
+                font-weight: bold;
+                border: 1px solid #555;
+            }
+            QPushButton {
+                background-color: #31363b;
+                color: #f0f0f0;
+                border: 1px solid #555;
+                border-radius: 8px;
+            }
+            QPushButton:pressed {
+                background-color: #232629;
+            }
+            QLabel {
+                color: #f0f0f0;
+            }
+        """)
 
     def mensaje_confirmacion(self, titulo, texto):
         msg = QMessageBox(self)

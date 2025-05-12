@@ -6,11 +6,11 @@ class PantallaOperadorVista(QWidget):
         super().__init__()
         self.controlador = controlador
         self.setWindowTitle("Pantalla Operador")
-        self.setFixedSize(1024, 768)  # <-- Fijar resolución
+        self.setFixedSize(1024, 768)  
 
         layout = QVBoxLayout()
         layout.setSpacing(40)
-        layout.setContentsMargins(70, 80, 70, 80)
+        layout.setContentsMargins(40, 50, 40, 50)
 
         self.label = QLabel("Ingrese el nombre y apellido:")
         self.label.setAlignment(Qt.AlignCenter)
@@ -32,67 +32,68 @@ class PantallaOperadorVista(QWidget):
         teclado_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         layout.addWidget(teclado_widget)
 
-        layout.addSpacerItem(QSpacerItem(30, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        layout.addSpacerItem(QSpacerItem(10, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         self.setLayout(layout)
+        self.set_dark_theme()  
 
     def crear_teclado(self):
         grid = QGridLayout()
-        grid.setSpacing(10)
+        grid.setSpacing(20)
         filas = [
             "QWERTYUIOP",
             "ASDFGHJKLÑ",
             "ZXCVBNM"
         ]
-        # Primera fila (desplazada una columna)
+        # Primera fila (sin desplazamiento)
         for col, letra in enumerate(filas[0]):
             btn = QPushButton(letra)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
             btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
-            grid.addWidget(btn, 0, col + 1)
-        # Segunda fila (desplazada dos columnas)
+            grid.addWidget(btn, 0, col)
+        # Segunda fila (desplazada una columna)
         for col, letra in enumerate(filas[1]):
             btn = QPushButton(letra)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
             btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
-            grid.addWidget(btn, 1, col + 2)
-        # Tercera fila (desplazada tres columnas)
+            grid.addWidget(btn, 1, col + 1)
+        # Tercera fila (desplazada dos columnas)
         for col, letra in enumerate(filas[2]):
             btn = QPushButton(letra)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
             btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
-            grid.addWidget(btn, 2, col + 3)
+            grid.addWidget(btn, 2, col + 2)
 
         # Botón espacio
         btn_espacio = QPushButton("Espacio")
         btn_espacio.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         btn_espacio.setStyleSheet("font-size: 25px; min-width: 150px; min-height: 70px;")
         btn_espacio.clicked.connect(lambda: self.nombre_edit.insert(" "))
-        grid.addWidget(btn_espacio, 3, 5, 1, 3)  # Ajusta la posición y el tamaño según lo necesites
+        grid.addWidget(btn_espacio, 3, 4, 1, 4)  # Centrado
 
         # Botón borrar una letra (Backspace)
         btn_borrar = QPushButton("←")
         btn_borrar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         btn_borrar.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
         btn_borrar.clicked.connect(self.borrar_una_letra)
-        grid.addWidget(btn_borrar, 0, 11)
+        grid.addWidget(btn_borrar, 0, 10)
 
         # Botón limpiar todo
         btn_limpiar = QPushButton("Limpiar")
         btn_limpiar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        btn_limpiar.setStyleSheet("font-size: 20px; min-width: 70px; min-height: 70px;")
+        btn_limpiar.setStyleSheet("font-size: 20px; min-width: 65px; min-height: 70px;")
         btn_limpiar.clicked.connect(self.nombre_edit.clear)
-        grid.addWidget(btn_limpiar, 0, 12, 1, 1)
+        grid.addWidget(btn_limpiar, 0, 11)
 
         # Botón OK grande
         btn_ok = QPushButton("OK")
         btn_ok.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        btn_ok.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 170px;")
+        btn_ok.setStyleSheet("font-size: 30px; min-width: 65px; min-height: 170px;")
         btn_ok.clicked.connect(self.enviar_nombre)
-        grid.addWidget(btn_ok, 1, 12, 2, 1)
+        grid.addWidget(btn_ok, 1, 11, 2, 1)
 
         return grid
 
@@ -104,3 +105,29 @@ class PantallaOperadorVista(QWidget):
         nombre = self.nombre_edit.text()
         self.controlador.agregar_persona(nombre)
         self.nombre_edit.clear()
+
+    def set_dark_theme(self):
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #232629;
+                color: #f0f0f0;
+            }
+            QLineEdit {
+                background-color: #31363b;
+                color: #f0f0f0;
+                border: 2px solid #555;
+                border-radius: 8px;
+            }
+            QPushButton {
+                background-color: #31363b;
+                color: #f0f0f0;
+                border: 1px solid #555;
+                border-radius: 8px;
+            }
+            QPushButton:pressed {
+                background-color: #232629;
+            }
+            QLabel {
+                color: #f0f0f0;
+            }
+        """)
