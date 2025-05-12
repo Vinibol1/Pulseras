@@ -12,7 +12,8 @@ class PantallaAdministradorVista(QWidget):
         layout = QVBoxLayout()
         # Barra de búsqueda
         self.buscador = QLineEdit()
-        self.buscador.setPlaceholderText("Buscar por nombre...")
+        self.buscador.setFixedHeight(50)
+        self.buscador.setPlaceholderText("Buscar por nombre o pulsera...")
         self.buscador.textChanged.connect(self.actualizar_tabla)
         layout.addWidget(self.buscador)
         # Tabla con 3 columnas
@@ -23,7 +24,7 @@ class PantallaAdministradorVista(QWidget):
         self.tabla.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.tabla.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.tabla.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.tabla.setColumnWidth(2, 60)  # Ajusta el ancho de la columna "Eliminar"
+        self.tabla.setColumnWidth(2, 90)  # O prueba 80, 100, etc. según lo que necesites
         self.tabla.verticalHeader().setVisible(True)
         self.tabla.setSelectionBehavior(QTableWidget.SelectRows)
         layout.addWidget(self.tabla)
@@ -115,6 +116,7 @@ class PantallaAdministradorVista(QWidget):
         self.tabla.blockSignals(True)
         self.tabla.setRowCount(len(personas_filtradas))
         for i, persona in enumerate(personas_filtradas):
+            self.tabla.setRowHeight(i, 10)  # Ajusta el alto de la fila según el tamaño del botón
             nombre_item = QTableWidgetItem(persona.nombre)
             nombre_item.setFlags(nombre_item.flags())
             nombre_item.setFont(QFont("Arial", 15))
@@ -124,9 +126,9 @@ class PantallaAdministradorVista(QWidget):
             self.tabla.setItem(i, 1, pulsera_item)
             # Botón eliminar centrado
             btn_eliminar = QPushButton("✖")
-            btn_eliminar.setFixedSize(30, 30)
+            btn_eliminar.setFixedSize(36, 36)
             btn_eliminar.setStyleSheet(
-                "background-color: darkred; color: white; font-size: 20px;"
+                "background-color: darkred; color: white; font-size: 28px; border-radius: 28px;"
             )
             btn_eliminar.clicked.connect(lambda _, row=i: self.eliminar_persona(row))
             widget_centro = QWidget()
@@ -134,7 +136,7 @@ class PantallaAdministradorVista(QWidget):
             layout_centro.addStretch()
             layout_centro.addWidget(btn_eliminar)
             layout_centro.addStretch()
-            layout_centro.setContentsMargins(0, 0, 0, 0)
+            layout_centro.setContentsMargins(0, 10, 0, 10)  # Más espacio vertical
             self.tabla.setCellWidget(i, 2, widget_centro)
         self.tabla.blockSignals(False)
         if personas_filtradas:
@@ -232,3 +234,19 @@ class PantallaAdministradorVista(QWidget):
         if respuesta == QMessageBox.Yes:
             self.controlador.eliminar_persona(row)
             self.actualizar_tabla()
+
+    def poblar_con_ejemplo(self):
+        class Persona:
+            def __init__(self, nombre, pulsera):
+                self.nombre = nombre
+                self.pulsera = pulsera
+
+        personas = []
+        for i in range(1, 101):
+            nombre = f"Persona {i}"
+            pulsera = f"PULS-{i:03d}"
+            personas.append(Persona(nombre, pulsera))
+
+        # Simula que el controlador tiene este método o atributo
+        self.controlador.obtener_personas = lambda: personas
+        self.actualizar_tabla()
