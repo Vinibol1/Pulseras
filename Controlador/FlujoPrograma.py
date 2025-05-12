@@ -1,8 +1,13 @@
 import pickle
+import os
 from PySide6.QtWidgets import QApplication
 from Modelo.Persona import Persona
 from Vista.PantallaOperadorVista import PantallaOperadorVista
 from Vista.PantallaAdministradorVista import PantallaAdministradorVista
+
+ruta = os.path.join(os.environ["LOCALAPPDATA"], "Pulseras")
+os.makedirs(ruta, exist_ok=True)
+archivo = os.path.join(ruta, "personas.pkl")
 
 class FlujoPrograma:
     def __init__(self):
@@ -37,12 +42,12 @@ class FlujoPrograma:
             self.guardar_personas()
 
     def guardar_personas(self):
-        with open("personas.pkl", "wb") as f:
+        with open(archivo, "wb") as f:
             pickle.dump(self.personas, f)
 
     def cargar_personas(self):
         try:
-            with open("personas.pkl", "rb") as f:
+            with open(archivo, "rb") as f:
                 self.personas = pickle.load(f)
         except FileNotFoundError:
             self.personas = []
