@@ -8,7 +8,8 @@ class PantallaAdministradorVista(QWidget):
         super().__init__()
         self.controlador = controlador
         self.setWindowTitle("Pantalla Administrador")
-        self.resize(1400, 1000)
+        
+        self.resize(1024, 768)
         layout = QVBoxLayout()
         # Barra de búsqueda
         self.buscador = QLineEdit()
@@ -19,32 +20,33 @@ class PantallaAdministradorVista(QWidget):
         layout.addWidget(self.buscador)
         # Tabla con 3 columnas
         self.tabla = QTableWidget(0, 3)
-        self.tabla.setHorizontalHeaderLabels(["Nombre", "Pulsera", "Eliminar"])
+        self.tabla.setHorizontalHeaderLabels(["Invitado", "    Unidad    ", "Del"])
         self.tabla.setFont(QFont("Arial", 15))
         self.tabla.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tabla.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.tabla.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.tabla.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.tabla.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.tabla.setColumnWidth(2, 90)  # O prueba 80, 100, etc. según lo que necesites
+        self.tabla.setColumnWidth(2, 90) 
         self.tabla.verticalHeader().setVisible(True)
         self.tabla.setSelectionBehavior(QTableWidget.SelectRows)
         layout.addWidget(self.tabla)
+
+        # Botones en la misma fila
+        botones_layout = QHBoxLayout()
         self.btn_asociar = QPushButton("Asociar Pulsera")
         self.btn_asociar.setFont(QFont("Arial", 18))
-        self.btn_asociar.setFixedHeight(100)
+        self.btn_asociar.setFixedHeight(80)
         self.btn_asociar.clicked.connect(self.asociar_pulsera)
-        layout.addWidget(self.btn_asociar)
 
-        # Botón de restablecer en la esquina inferior derecha
-        h_layout = QHBoxLayout()
-        h_layout.addStretch()  
-        self.btn_reset = QPushButton("Restablecer Todo")
-        self.btn_reset.setFont(QFont("Arial", 18))
+        self.btn_reset = QPushButton("Reset")
+        self.btn_reset.setFont(QFont("Arial", 14))
         self.btn_reset.setStyleSheet("background-color: darkred; color: white;")
-        self.btn_reset.setFixedHeight(50)
+        self.btn_reset.setFixedSize(120, 60)  # Más chico
         self.btn_reset.clicked.connect(self.reestablecer_todo)
-        h_layout.addWidget(self.btn_reset)
-        layout.addLayout(h_layout)
+        botones_layout.addWidget(self.btn_reset)
+        botones_layout.addWidget(self.btn_asociar)
+
+        layout.addLayout(botones_layout)
 
         self.setLayout(layout)
         self.tabla.cellChanged.connect(self.pulsera_editada)
@@ -120,7 +122,7 @@ class PantallaAdministradorVista(QWidget):
             self.tabla.setRowHeight(i, 10)  # Ajusta el alto de la fila según el tamaño del botón
             nombre_item = QTableWidgetItem(persona.nombre)
             nombre_item.setFlags(nombre_item.flags())
-            nombre_item.setFont(QFont("Arial", 15))
+            nombre_item.setFont(QFont("Arial", 17))
             self.tabla.setItem(i, 0, nombre_item)
             pulsera_item = QTableWidgetItem(persona.pulsera or "")
             pulsera_item.setFont(QFont("Arial", 15))

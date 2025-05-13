@@ -6,13 +6,13 @@ class PantallaOperadorVista(QWidget):
         super().__init__()
         self.controlador = controlador
         self.setWindowTitle("Pantalla Operador")
-        self.setFixedSize(1024, 768)  
+        self.resize(1300, 1000)  
 
         layout = QVBoxLayout()
         layout.setSpacing(40)
-        layout.setContentsMargins(40, 50, 40, 50)
+        layout.setContentsMargins(40, 50, 40, 30)
 
-        self.label = QLabel("Ingrese el nombre y apellido:")
+        self.label = QLabel("Ingrese el NOMBRE Y APELLIDO:")
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet("font-size: 30px; font-weight: bold;")
         layout.addWidget(self.label)
@@ -41,50 +41,62 @@ class PantallaOperadorVista(QWidget):
         grid = QGridLayout()
         grid.setSpacing(20)
         filas = [
-            "QWERTYUIOP",
+            "1234567890",
+            "QWERTYUIOP'",
             "ASDFGHJKLÑ",
             "ZXCVBNM"
         ]
-        # Primera fila (sin desplazamiento)
-        for col, letra in enumerate(filas[0]):
-            btn = QPushButton(letra)
+        
+        # Fila de números (sin desplazamiento)
+        for col, numero in enumerate(filas[0]):
+            btn = QPushButton(numero)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
-            btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
+            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 80px;")  
+            btn.clicked.connect(lambda _, n=numero: self.nombre_edit.insert(n))
             grid.addWidget(btn, 0, col)
-        # Segunda fila (desplazada una columna)
+            
+        # Primera fila de letras 
         for col, letra in enumerate(filas[1]):
             btn = QPushButton(letra)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
+            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 80px;")  
             btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
-            grid.addWidget(btn, 1, col + 1)
-        # Tercera fila (desplazada dos columnas)
+            grid.addWidget(btn, 1, col)
+            
+        # Segunda fila de letras (desplazada una columna)
         for col, letra in enumerate(filas[2]):
             btn = QPushButton(letra)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
+            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 80px;")  
             btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
-            grid.addWidget(btn, 2, col + 2)
+            grid.addWidget(btn, 2, col + 1)
+            
+        # Tercera fila de letras (desplazada dos columnas)
+        for col, letra in enumerate(filas[3]):
+            btn = QPushButton(letra)
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            btn.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 80px;")  
+            btn.clicked.connect(lambda _, l=letra: self.nombre_edit.insert(l))
+            grid.addWidget(btn, 3, col + 2)
 
         # Botón espacio
         btn_espacio = QPushButton("Espacio")
         btn_espacio.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        btn_espacio.setStyleSheet("font-size: 25px; min-width: 150px; min-height: 70px;")
+        btn_espacio.setStyleSheet("font-size: 25px; min-width: 150px; min-height: 80px;")  
         btn_espacio.clicked.connect(lambda: self.nombre_edit.insert(" "))
-        grid.addWidget(btn_espacio, 3, 4, 1, 4)  # Centrado
+        grid.addWidget(btn_espacio, 4, 4, 1, 4)  # Ajustado a fila 4
 
         # Botón borrar una letra (Backspace)
         btn_borrar = QPushButton("←")
         btn_borrar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        btn_borrar.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 70px;")
+        btn_borrar.setStyleSheet("font-size: 30px; min-width: 70px; min-height: 80px;")  
         btn_borrar.clicked.connect(self.borrar_una_letra)
         grid.addWidget(btn_borrar, 0, 10)
 
         # Botón limpiar todo
         btn_limpiar = QPushButton("Limpiar")
         btn_limpiar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        btn_limpiar.setStyleSheet("font-size: 20px; min-width: 65px; min-height: 70px;")
+        btn_limpiar.setStyleSheet("font-size: 20px; min-width: 65px; min-height: 80px;")  # Aumentado a 80px
         btn_limpiar.clicked.connect(self.nombre_edit.clear)
         grid.addWidget(btn_limpiar, 0, 11)
 
@@ -93,7 +105,7 @@ class PantallaOperadorVista(QWidget):
         btn_ok.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         btn_ok.setStyleSheet("font-size: 30px; min-width: 65px; min-height: 170px;")
         btn_ok.clicked.connect(self.enviar_nombre)
-        grid.addWidget(btn_ok, 1, 11, 2, 1)
+        grid.addWidget(btn_ok, 1, 11, 3, 1)  # Ajustado para abarcar 3 filas
 
         return grid
 
