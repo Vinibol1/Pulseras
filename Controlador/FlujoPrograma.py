@@ -5,9 +5,13 @@ from Modelo.Persona import Persona
 from Vista.PantallaOperadorVista import PantallaOperadorVista
 from Vista.PantallaAdministradorVista import PantallaAdministradorVista
 
-#ruta = os.path.join(os.environ["LOCALAPPDATA"], "Pulseras")
-#os.makedirs(ruta, exist_ok=True)
-archivo = os.path.join("personas.pkl")
+# Definir ruta local de Windows si corresponde
+if os.name == "nt":
+    ruta = os.path.join(os.environ["LOCALAPPDATA"], "Pulseras")
+    os.makedirs(ruta, exist_ok=True)
+    archivo = os.path.join(ruta, "personas.pkl")
+else:
+    archivo = os.path.join("personas.pkl")
 
 class FlujoPrograma:
     def __init__(self):
