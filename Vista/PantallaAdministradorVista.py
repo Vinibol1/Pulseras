@@ -9,7 +9,7 @@ class PantallaAdministradorVista(QWidget):
         self.controlador = controlador
         self.setWindowTitle("Pantalla Administrador")
         
-        self.resize(1024, 768)
+        self.resize(700, 1000)
         layout = QVBoxLayout()
         # Barra de búsqueda
         self.buscador = QLineEdit()
@@ -20,7 +20,7 @@ class PantallaAdministradorVista(QWidget):
         layout.addWidget(self.buscador)
         # Tabla con 3 columnas
         self.tabla = QTableWidget(0, 3)
-        self.tabla.setHorizontalHeaderLabels(["Invitado", "    Unidad    ", "Del"])
+        self.tabla.setHorizontalHeaderLabels(["Invitado", "    Unidad    ", "BAJA"])
         self.tabla.setFont(QFont("Arial", 15))
         self.tabla.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tabla.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
@@ -109,7 +109,7 @@ class PantallaAdministradorVista(QWidget):
         )
         return msg.exec()
 
-    def actualizar_tabla(self):
+    def actualizar_tabla(self, seleccionar_fila=None, seleccionar_columna=None):
         filtro = self.buscador.text().lower() if hasattr(self, 'buscador') else ""
         personas = [p for p in self.controlador.obtener_personas() if p is not None]  
         personas_filtradas = [
@@ -133,6 +133,7 @@ class PantallaAdministradorVista(QWidget):
             btn_eliminar.setStyleSheet(
                 "background-color: darkred; color: white; font-size: 28px; border-radius: 28px;"
             )
+            btn_eliminar.marcada = False 
             btn_eliminar.clicked.connect(lambda _, row=i: self.eliminar_persona(row))
             widget_centro = QWidget()
             layout_centro = QHBoxLayout(widget_centro)
@@ -143,7 +144,10 @@ class PantallaAdministradorVista(QWidget):
             self.tabla.setCellWidget(i, 2, widget_centro)
         self.tabla.blockSignals(False)
         if personas_filtradas:
-            self.tabla.selectRow(len(personas_filtradas) - 1)
+            if seleccionar_fila is not None and seleccionar_columna is not None:
+                self.tabla.setCurrentCell(seleccionar_fila, seleccionar_columna)
+            else:
+                self.tabla.selectRow(len(personas_filtradas) - 1)
 
     def validar_pulsera(self, row, pulsera):
         persona = self.controlador.obtener_personas()[row]
@@ -221,6 +225,24 @@ class PantallaAdministradorVista(QWidget):
         event.accept()
 
     def reestablecer_todo(self):
+        # Solicita la contraseña antes de continuar (estilo grande para pantalla táctil)
+        dialog = QInputDialog(self)
+        dialog.setCancelButtonText("Cancelar")
+        dialog.setOkButtonText("Aceptar")
+        dialog.setWindowTitle("Contraseña requerida")
+        dialog.setLabelText("Ingrese la contraseña para resetear:")
+        dialog.setFont(QFont("Arial", 32))
+        dialog.setStyleSheet(
+            "QLabel{min-width: 600px; min-height: 120px; font-size: 32px;} "
+            "QLineEdit{font-size: 32px; min-height: 80px;} "
+            "QPushButton{font-size: 32px; min-width: 200px; min-height: 100px;}"
+        )
+        dialog.resize(800, 300)
+        dialog.setTextEchoMode(QLineEdit.Password)
+        if dialog.exec() != QInputDialog.Accepted or dialog.textValue() != "1631":
+            QMessageBox.warning(self, "Acceso denegado", "Contraseña incorrecta.")
+            return
+
         respuesta = self.mensaje_confirmacion(
             "Restablecer todo",
             "¿Está seguro de que desea restablecer todas las personas y pulseras a 0? Esta acción no se puede deshacer."
@@ -230,13 +252,39 @@ class PantallaAdministradorVista(QWidget):
             self.actualizar_tabla()
 
     def eliminar_persona(self, row):
-        respuesta = self.mensaje_confirmacion(
-            "Eliminar persona",
-            "¿Está seguro de que desea eliminar a esta persona?"
-        )
-        if respuesta == QMessageBox.Yes:
-            self.controlador.eliminar_persona(row)
-            self.actualizar_tabla()
+        # Obtén el botón de la fila
+        widget = self.tabla.cellWidget(row, 2)
+        btn = widget.findChild(QPushButton) if widget else None
+
+        # Verifica si la fila está marcada (usando la propiedad del botón)
+        marcada = getattr(btn, "marcada", False)
+
+        if not marcada:
+            respuesta = self.mensaje_confirmacion(
+                "Marcar persona",
+                "¿Está seguro de que desea marcar a esta persona?"
+            )
+            if respuesta == QMessageBox.Yes:
+                # Marca la fila en verde
+                for col in range(self.tabla.columnCount()):
+                    item = self.tabla.item(row, col)
+                    if item:
+                        item.setBackground(Qt.green)
+                btn.setText("↩")
+                btn.marcada = True
+        else:
+            respuesta = self.mensaje_confirmacion(
+                "Desmarcar persona",
+                "¿Está seguro de que desea desmarcar a esta persona?"
+            )
+            if respuesta == QMessageBox.Yes:
+                # Restaura el color original
+                for col in range(self.tabla.columnCount()):
+                    item = self.tabla.item(row, col)
+                    if item:
+                        item.setBackground(Qt.transparent)
+                btn.setText("✖")
+                btn.marcada = False
 
     def poblar_con_ejemplo(self):
         class Persona:
